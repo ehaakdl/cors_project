@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.Blacklist_TokenDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
+import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.util.cookie.CookieManagement;
@@ -184,7 +185,7 @@ public class LoginTokenManagement extends JwtTokenManagement{
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public String refresh(long refreshTokenIndex) {
+    public String refresh(long refreshTokenIndex, MemberRole memberRole) {
         if(!isAvailRefresh(refreshTokenIndex)){
             return null;
         }
@@ -194,13 +195,18 @@ public class LoginTokenManagement extends JwtTokenManagement{
         if(claims == null) {
             return null;
         }
+        if(memberRole != null){
+            List roles = new ArrayList();
+            roles.add(new MemberGrantAuthority(memberRole));
+            claims.put(MemberParam.ROLE, roles);
+        }
 
         long refreshTokenExpireTime = tokenInfoDAO.getExpire_date();
         Map<String, Object> headers = this.setHeaders();
         Date expireDate = null;
         Map<String, Object> result = new HashMap<>();
         long remainTime = refreshTokenExpireTime - System.currentTimeMillis();
-        if(remainTime < 0 || remainTime < AUTO_REFRESH_INTERVAL){
+        if(memberRole != null || remainTime < 0 || remainTime < AUTO_REFRESH_INTERVAL){
             expireDate = createExpireDate(REFRESH_EXPIRETIME);
             String refreshToken = super.create(expireDate, headers, claims);
             if(refreshToken == null){
@@ -213,6 +219,8 @@ public class LoginTokenManagement extends JwtTokenManagement{
         expireDate = createExpireDate(ACCESS_EXPIRETIME);
         return create(expireDate, headers, claims);
     }
+
+
 
     @Override
     public Map<String, Object> setHeaders(){

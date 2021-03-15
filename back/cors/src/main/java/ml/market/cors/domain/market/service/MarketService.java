@@ -16,6 +16,7 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.util.cookie.CookieManagement;
 import ml.market.cors.domain.util.cookie.eCookie;
@@ -332,8 +333,15 @@ private Map<String, Object> setClaims(long member_id, List memberRoles, String e
         return true;
     }
 
-    public boolean exsistsMyMarket(long memberId) {
+    public boolean exsistsMyMarket(List roles, long memberId) {
         if(memberId == 0){
+            return false;
+        }
+        if(roles == null){
+            return false;
+        }
+        MemberGrantAuthority memberRole = (MemberGrantAuthority) roles.get(0);
+        if(!memberRole.getAuthority().equals(MemberRole.CEO.getRole())){
             return false;
         }
         MarketDAO marketDAO = marketRepository.findByMemberId(memberId);

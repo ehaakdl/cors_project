@@ -259,7 +259,8 @@ public class MemberController {
     @GetMapping("/mypage/request/mymarket")
     public ResponseEntity<Message<Object>> getRequestMyMarket(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
         long memberId = (long)jwtCertificationToken.getCredentials();
-        boolean bResult = marketService.exsistsMyMarket(memberId);
+        List roles = (List)jwtCertificationToken.getAuthorities();
+        boolean bResult = marketService.exsistsMyMarket(roles, memberId);
         ResponseEntity<Message<Object>> messageResponseEntity;
         if(bResult){
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("나의 마켓 등록확인 성공");

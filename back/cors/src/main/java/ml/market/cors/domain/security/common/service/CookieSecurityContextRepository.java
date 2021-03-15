@@ -44,7 +44,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             return null;
         }
         long refreshTokenIndex = ((Number)claims.get(LoginTokenManagement.REFRESH_TOKEN_INDEX)).longValue();
-        String accessToken = loginTokenManagement.refresh(refreshTokenIndex);
+        String accessToken = loginTokenManagement.refresh(refreshTokenIndex, null);
         if(accessToken == null){
             log.debug("재발급 실패");
             return null;
@@ -52,7 +52,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         return accessToken;
     }
 
-    private Map<String, Object> refresh(Cookie[] cookies){
+    private Map<String, Object> refresh(HttpServletResponse response, Cookie[] cookies, MemberRole memberRole){
         Cookie cook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
         if(cook == null){
             return null;
@@ -62,10 +62,16 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             return null;
         }
         Long index = ((Number)claims.get(LoginTokenManagement.REFRESH_TOKEN_INDEX)).longValue();
-        String accessToken = loginTokenManagement.refresh(index);
+        String accessToken = loginTokenManagement.refresh(index, memberRole);
         if (accessToken == null) {
             return null;
         }
+        eCookie accesTokenCookie = eCookie.ACCESS_TOKEN;
+        cook = CookieManagement.add(accesTokenCookie.getName(), accesTokenCookie.getMaxAge(), "/", accessToken);
+        if(cook == null){
+            return null;
+        }
+        response.addCookie(cook);
         claims = loginTokenManagement.getClaims(accessToken);
         return claims;
     }
@@ -94,10 +100,10 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             MemberGrantAuthority tokenRole = (MemberGrantAuthority) tokenRoleList.get(0);
             if(memberRole.getRole() != tokenRole.getAuthority()){
                 response.setHeader(MemberParam.ROLE, memberRole.getRole());
-                claims = refresh(cookies);
+                claims = refresh(response, cookies, memberRole);
             }
         }else{
-            claims = refresh(cookies);
+            claims = refresh(response, cookies, null);
         }
         return claims;
     }

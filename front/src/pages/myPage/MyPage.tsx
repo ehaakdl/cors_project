@@ -279,7 +279,7 @@ function MyPage():JSX.Element {
         history.push(`/market/${myMarketList[0]}`);
       }
     } catch {
-      ToastsStore.error('마켓 승인 대기');
+      ToastsStore.error('마켓 승인 대기중이거나 등록한 요청이 없습니다.');
     }
   };
 

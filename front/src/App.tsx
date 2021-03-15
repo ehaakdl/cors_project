@@ -29,6 +29,8 @@ import AdminHome from './pages/admin/home/AdminHome';
 import AdminNotice from './pages/admin/notice/AdminNotice';
 import AdminNoticeDetail from './pages/admin/notice/NoticeDetail';
 import AdminNoticeAdd from './pages/admin/notice/NoticeAdd';
+import AdminMarket from './pages/admin/market/AdminMarket';
+import AdminMarketDetail from './pages/admin/market/AdminMarketDetail';
 
 function App():JSX.Element {
   return (
@@ -63,6 +65,8 @@ function App():JSX.Element {
             <Route path="/admin/notice" exact component={AdminNotice} />
             <Route path="/admin/addNoitce" exact component={AdminNoticeAdd} />
             <Route path="/admin/notice/:id" exact component={AdminNoticeDetail} />
+            <Route path="/admin/market" exact component={AdminMarket} />
+            <Route path="/admin/market/:id" exact component={AdminMarketDetail} />
             <Route component={NotFound} />
           </Switch>
         </BrowserRouter>

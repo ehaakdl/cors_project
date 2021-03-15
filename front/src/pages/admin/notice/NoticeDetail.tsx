@@ -212,7 +212,7 @@ function AdminNoticeDetail():JSX.Element {
   const [isModify, setIsModify] = useState(false);
   const [isModalVisable, setIsModalVisable] = useState(false);
   const { noticeDetail } = useSelector((state) => state.adminSlice);
-  const { title, content, noticeId } = noticeDetail;
+  const { title, content, noticeId, writeDate } = noticeDetail;
   const [inputs, setInputs] = useState({
     title,
     content,
@@ -291,7 +291,7 @@ function AdminNoticeDetail():JSX.Element {
               <>
                 <TitleArea>
                   <input onChange={onchangeInputs} type="text" name="title" value={inputs.title} />
-                  <p>2021.03.02</p>
+                  <p>{writeDate}</p>
                 </TitleArea>
                 <TextArea>
                   <textarea onChange={onchangeInputs} name="content" value={inputs.content} />
@@ -306,7 +306,7 @@ function AdminNoticeDetail():JSX.Element {
               <>
                 <TitleArea>
                   <h2>{title}.</h2>
-                  <p>2021.03.02</p>
+                  <p>{writeDate}</p>
                 </TitleArea>
                 <TextArea>
                   <pre>

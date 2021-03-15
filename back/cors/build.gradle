@@ -30,13 +30,25 @@ remotes {
 	}
 }
 
-//원격 scp 빌드파일 전송
+//원격 scp 백엔드 빌드파일 전송
 task scp {
 	doLast {
 		ssh.run {
 			session(remotes.corsServer) {
-				final String buildDir = project.projectDir.path + "/" + buildFileDir
-				put from: buildDir, into: project.properties["publicDir"]
+				final String buildDir = project.projectDir.path + buildFileDir
+				put from: buildDir, into: project.properties["publicBackDir"]
+			}
+		}
+	}
+}
+
+//원격 scp 프론트 빌드파일 전송
+task frontbuild {
+	doLast {
+		ssh.run {
+			session(remotes.corsServer) {
+				final String buildDir = project.projectDir.path + frontBuildDir
+				put from: buildDir, into: project.properties["publicFrontDir"]
 			}
 		}
 	}
