@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
+import { getMarketRequestInterface } from '../interfaces/MarketInterface';
 
-//const URL = 'https://corsmarket.ml';
-const URL = 'http://localhost:3000';
+const URL = 'https://corsmarket.ml';
+//const URL = 'http://localhost:3000';
 
 // 마켓리스트 불러오기
 export function loadMarketAPI(): Promise<AxiosResponse> {
@@ -36,10 +37,20 @@ export function addMarketAPI(market: FormData): Promise<AxiosResponse> {
 }
 
 // 마켓 승인 요청 목록
-export function getMarketRequest(page: number): Promise<AxiosResponse> {
+export function getMarketRequestAsync(page: number): Promise<getMarketRequestInterface> {
   return axios({
     method: 'get',
     url: `/api/admin/markets/${page}`,
+  }).then((result) => {
+    const { marketRequestList, totalPage } = result.data.data;
+    return {
+      data: marketRequestList.map((item: { marketId: string, marketName: string, marketStatus: string }) => (
+        {
+          ...item,
+        }
+      )),
+      totalPage,
+    };
   });
 }
 

@@ -1,3 +1,13 @@
+export interface getMarketRequestInterface {
+  data: marketRequestInterface,
+  totalPage: number,
+}
+export interface marketRequestInterface{
+  marketId: number,
+  marketName: string,
+  marketStatus: string,
+}
+
 export interface marketListInterface {
   data: marketInterface[],
 }

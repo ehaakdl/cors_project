@@ -8,7 +8,9 @@ const reportList: adminReportInterface[] = [];
 const adminSlice = createSlice({
   name: 'admin',
   initialState: {
+    marketRequestList,
     noticeList,
+    marketTotalPage: 0,
     noticeTotalPage: 0,
     noticeDetail: {
       noticeId: '',
@@ -16,7 +18,11 @@ const adminSlice = createSlice({
       content: '',
       writeDate: '',
     },
-    marketRequestList,
+    marketDetail: {
+      marketId: '',
+      title: '',
+      status: '',
+    },
     reportList,
     isAdminLoginLoading: false,
     isAdminLoginSuccess: false,
@@ -27,6 +33,13 @@ const adminSlice = createSlice({
     isGetNoticeDetailLoading: false,
     isGetNoticeDetailSuccess: false,
     isGetNoticeDetailError: null,
+
+    isGetMarketLoading: false,
+    isGetMarketSuccess: false,
+    isGetMarketError: null,
+    isGetMarketDetailLoading: false,
+    isGetMarketDetailSuccess: false,
+    isGetMarketDetailError: null,
   },
   reducers: {
     adminLoginRequest: (state, action) => {
@@ -67,6 +80,30 @@ const adminSlice = createSlice({
       state.isGetNoticeDetailError = null;
       state.noticeDetail = action.payload;
     },
+
+    getMarketRequest: (state, action) => {
+      state.isGetMarketLoading = true;
+      state.isGetMarketSuccess = false;
+      state.isGetMarketError = null;
+    },
+    getMarketRequestSuccess: (state, action) => {
+      state.isGetMarketLoading = false;
+      state.isGetMarketSuccess = true;
+      state.isGetMarketError = null;
+      state.marketTotalPage = action.payload.totalPage;
+      state.marketRequestList = action.payload.data;
+    },
+    getMarketRequestError: (state, action) => {
+      state.isGetMarketLoading = false;
+      state.isGetMarketSuccess = false;
+      state.isGetMarketError = action.payload;
+    },
+    getMarketDetailRequest: (state, action) => {
+      state.isGetMarketDetailLoading = true;
+      state.isGetMarketDetailSuccess = false;
+      state.isGetMarketDetailError = null;
+      state.marketDetail = action.payload;
+    },
   },
 });
 
@@ -78,6 +115,10 @@ export const {
   getNoticeRequestSuccess,
   getNoticeRequestError,
   getNoticeDetailRequest,
+  getMarketRequest,
+  getMarketRequestSuccess,
+  getMarketRequestError,
+  getMarketDetailRequest,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

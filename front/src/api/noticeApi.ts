@@ -43,7 +43,6 @@ export function getNoticeRequestAsync(page: number): Promise<getNoticeInterface>
 }
 
 export function reomveNoticeRequestAsync(noticeId: string): Promise<AxiosResponse> {
-  console.log(noticeId, 'test');
   return axios({
     method: 'delete',
     url: '/api/notice',

@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { adminMarketRequestInterface } from '../../../interfaces/AdminInterface';
 import numberArrayUtill from '../../../utils/numberArrayUtill';
-import { getNoticeDetailRequest, getNoticeRequest } from '../adminSlice';
+import { getMarketDetailRequest, getMarketRequest } from '../adminSlice';
 import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 
 const Layout = styled.div`
@@ -135,16 +135,15 @@ const NextPage = styled.img`
 function AdminMarket():JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { noticeTotalPage, noticeList } = useSelector((state) => state.adminSlice);
+  const { marketTotalPage, marketList } = useSelector((state) => state.adminSlice);
   const [page, setPage] = useState(0);
 
-  const onClickDetail = (notice: adminMarketRequestInterface) => {
-    console.log(notice);
-    dispatch(getNoticeDetailRequest(notice));
+  const onClickDetail = (market: adminMarketRequestInterface) => {
+    dispatch(getMarketDetailRequest(market));
   };
 
   useEffect(() => {
-    dispatch(getNoticeRequest(page));
+    dispatch(getMarketRequest(page));
   }, [page, dispatch]);
 
   return (
@@ -159,7 +158,7 @@ function AdminMarket():JSX.Element {
       <Content>
         <ul>
           {
-            noticeList.map((market: adminMarketRequestInterface) => (
+            marketList.map((market: adminMarketRequestInterface) => (
               <li key={market.marketId}>
                 <Link onClick={() => onClickDetail(market)} to={`/admin/market/${market.marketId}`}>
                   <h2>{market.marketName}</h2>
@@ -174,7 +173,7 @@ function AdminMarket():JSX.Element {
         <PrevPage src="/images/icons/back.png" />
         <PageNumbers>
           {
-            !noticeTotalPage
+            !marketTotalPage
               ? (
                 <PageNumber>
                   <PageLink to="/admin/market">1</PageLink>
@@ -183,7 +182,7 @@ function AdminMarket():JSX.Element {
               : (
                 <>
                   {
-                    numberArrayUtill(noticeTotalPage).map((i) => (
+                    numberArrayUtill(marketTotalPage).map((i) => (
                       <PageNumber>
                         <PageLink onClick={() => setPage(i - 1)} to={`/admin/market?page=${i - 1}`}>{i}</PageLink>
                       </PageNumber>
