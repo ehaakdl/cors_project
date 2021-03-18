@@ -5,6 +5,7 @@ import ml.market.cors.domain.board.entity.dto.QuestionMemberDTO;
 import ml.market.cors.domain.board.service.QuestionService;
 import ml.market.cors.domain.market.entity.dto.MarketApproveStatusUpdateDTO;
 import ml.market.cors.domain.market.entity.vo.MarketApproveListVO;
+import ml.market.cors.domain.market.entity.vo.MarketApprovePageVO;
 import ml.market.cors.domain.market.service.MarketService;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.util.Message;
@@ -28,7 +29,7 @@ public class AdminController {
     @GetMapping("/api/admin/markets/{page}")
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Message<Object>> getApproveList(@PathVariable("page") int pageIndex){
-        List<MarketApproveListVO> marketList = marketService.list(pageIndex);
+        MarketApprovePageVO marketList = marketService.list(pageIndex);
         ResponseEntity<Message<Object>> messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(marketList);
         return messageResponseEntity;
     }

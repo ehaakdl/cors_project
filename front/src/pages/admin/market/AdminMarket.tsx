@@ -135,14 +135,14 @@ const NextPage = styled.img`
 function AdminMarket():JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { marketTotalPage, marketList } = useSelector((state) => state.adminSlice);
+  const { marketTotalPage, marketRequestList } = useSelector((state) => state.adminSlice);
   const [page, setPage] = useState(0);
 
   const onClickDetail = (market: adminMarketRequestInterface) => {
     dispatch(getMarketDetailRequest(market));
   };
 
-  useEffect(() => {
+  useEffect(() => {  
     dispatch(getMarketRequest(page));
   }, [page, dispatch]);
 
@@ -158,7 +158,7 @@ function AdminMarket():JSX.Element {
       <Content>
         <ul>
           {
-            marketList.map((market: adminMarketRequestInterface) => (
+            marketRequestList.map((market: adminMarketRequestInterface) => (
               <li key={market.marketId}>
                 <Link onClick={() => onClickDetail(market)} to={`/admin/market/${market.marketId}`}>
                   <h2>{market.marketName}</h2>

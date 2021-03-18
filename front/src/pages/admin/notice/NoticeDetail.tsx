@@ -238,7 +238,6 @@ function AdminNoticeDetail():JSX.Element {
   };
 
   const onClickModify = async () => {
-    console.log(`${idParam}번 수정하기`);
     const formData = new FormData();
     formData.append('noticeId', noticeId);
     formData.append('title', inputs.title);

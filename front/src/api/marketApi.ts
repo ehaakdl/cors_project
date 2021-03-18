@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import { getMarketRequestInterface } from '../interfaces/MarketInterface';
 
-const URL = 'https://corsmarket.ml';
-//const URL = 'http://localhost:3000';
+//const URL = 'https://corsmarket.ml';
+const URL = 'http://localhost:3000';
 
 // 마켓리스트 불러오기
 export function loadMarketAPI(): Promise<AxiosResponse> {
@@ -51,6 +51,15 @@ export function getMarketRequestAsync(page: number): Promise<getMarketRequestInt
       )),
       totalPage,
     };
+  });
+}
+
+//마켓 요청에 대한 처리 보내기
+export function marketAcceptAndCancleRequest(market : FormData): Promise<AxiosResponse> {
+  return axios({
+    method: 'put',
+    url: '/api/admin/market/${marketId}',
+    data: market,
   });
 }
 

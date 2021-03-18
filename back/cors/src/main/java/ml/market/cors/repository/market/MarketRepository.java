@@ -18,7 +18,7 @@ public interface MarketRepository extends JpaRepository<MarketDAO,Long> {
     @Query("select m from MarketDAO m where m.member.member_id=:member_id")
     MarketDAO findByMemberId(@Param("member_id") Long member_id);
 
-    List<MarketDAO> findAllByStatus(Pageable pageable, MarketStatus status);
+    Page<MarketDAO> findAllByStatus(Pageable pageable, MarketStatus status);
 
     @Query("select count(marketTb.market_id) > 0 " +
             "from MarketDAO marketTb " +

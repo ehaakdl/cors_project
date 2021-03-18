@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import styled from 'styled-components';
-import { modifyNoticeRequestAsync, reomveNoticeRequestAsync } from '../../../api/noticeApi';
-import { getNoticeDetailRequest } from '../adminSlice';
+import { marketAcceptAndCancleRequest } from '../../../api/marketApi';
+import { getMarketDetailRequest } from '../adminSlice';
 
 const Layout = styled.div`
   position: relative;
@@ -209,69 +209,58 @@ function AdminMarketDetail():JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
   const { id: idParam } = useParams<{ id: string }>();
-  const [isModify, setIsModify] = useState(false);
+  const [isCancle, setIsCancle] = useState(false);
   const [isModalVisable, setIsModalVisable] = useState(false);
-  const { noticeDetail } = useSelector((state) => state.adminSlice);
-  const { title, content, noticeId } = noticeDetail;
-  const [inputs, setInputs] = useState({
-    title,
-    content,
-  });
+  const { marketDetail } = useSelector((state) => state.adminSlice);
+  const { marketName, marketStatus, marketId } = marketDetail;
+  const [cancleCause, setCancleCause] = useState('');
 
   const onchangeInputs = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value,
-    });
+    const { value } = e.target;
+    setCancleCause(value);
   };
 
-  const onClickModifyMode = () => {
-    if (isModify) {
-      setInputs({
-        title,
-        content,
-      });
+  const onClickCancleMode = () => {
+    if(isCancle){
+      setCancleCause(cancleCause);
     }
-
-    setIsModify(!isModify);
+    setIsCancle(!isCancle);
   };
-
-  const onClickModify = async () => {
-    console.log(`${idParam}번 수정하기`);
+  
+  const onClickAccept = async () => {
     const formData = new FormData();
-    formData.append('noticeId', noticeId);
-    formData.append('title', inputs.title);
-    formData.append('content', inputs.content);
+    formData.append('status', "ACCEPT");
+    formData.append('marketId', marketId);
     try {
-      const result = await modifyNoticeRequestAsync(formData);
+      const result = await marketAcceptAndCancleRequest(formData);
       if (result.status === 200) {
-        dispatch(getNoticeDetailRequest({
-          ...noticeDetail,
-          title: inputs.title,
-          content: inputs.content,
-        }));
-        ToastsStore.success('공지사항 수정이 완료되었습니다.');
-        setIsModify(!isModify);
+        ToastsStore.success('마켓승인 했습니다.');
+        setIsModalVisable(false);
+        history.push("/admin/market");
       }
     } catch (error) {
       setIsModalVisable(false);
       ToastsStore.error('서버에러 또는 권한 불충분');
-      setIsModify(!isModify);
+      setIsCancle(!isCancle);
     }
   };
 
-  const onClickDelete = async () => {
-    console.log(`${idParam}번 삭제하기`);
+  const onClickCancle = async () => {
+    const formData = new FormData();
+    formData.append('status', "REJECT");
+    formData.append('marketId', marketId);
+    formData.append('canclecause', cancleCause);
     try {
-      const result = await reomveNoticeRequestAsync(noticeId);
+      const result = await marketAcceptAndCancleRequest(formData);
       if (result.status === 200) {
-        history.push('/admin/notice');
-        ToastsStore.success('공지사항 삭제가 완료되었습니다.');
+        ToastsStore.success('마켓승인 거절했습니다.');
+        setIsCancle(!isCancle);
+        history.push("/admin/market");
       }
     } catch (error) {
       setIsModalVisable(false);
       ToastsStore.error('서버에러 또는 권한 불충분');
+      setIsCancle(!isCancle);
     }
   };
 
@@ -286,36 +275,30 @@ function AdminMarketDetail():JSX.Element {
       </Header>
       <Content>
         {
-          isModify
+          isCancle
             ? (
               <>
                 <TitleArea>
-                  <input onChange={onchangeInputs} type="text" name="title" value={inputs.title} />
-                  <p>2021.03.02</p>
+                  <input type="text" name="marketName" value={marketName} />
                 </TitleArea>
+                <p>{marketStatus}</p>
                 <TextArea>
-                  <textarea onChange={onchangeInputs} name="content" value={inputs.content} />
+                  <textarea onChange={onchangeInputs} name="canclecause" value={cancleCause}/>
                 </TextArea>
                 <ButtonBox>
-                  <button onClick={onClickModifyMode} className="modify" type="button">취소</button>
-                  <button onClick={onClickModify} className="delete" type="button">수정하기</button>
+                  <button onClick={onClickCancle} className="modify" type="button">수정</button>
+                  <button onClick={() => setIsCancle(false)} className="delete" type="button">취소</button>
                 </ButtonBox>
               </>
             )
             : (
               <>
                 <TitleArea>
-                  <h2>{title}.</h2>
-                  <p>2021.03.02</p>
+                  <h2>{marketName}</h2>
                 </TitleArea>
-                <TextArea>
-                  <pre>
-                    {content}
-                  </pre>
-                </TextArea>
                 <ButtonBox>
-                  <button onClick={onClickModifyMode} className="modify" type="button">수정</button>
-                  <button onClick={() => setIsModalVisable(true)} className="delete" type="button">삭제</button>
+                  <button onClick={() => setIsModalVisable(true)} className="modify" type="button">승인</button>
+                  <button onClick={onClickCancleMode} className="delete" type="button">삭제</button>
                 </ButtonBox>
               </>
             )
@@ -325,10 +308,10 @@ function AdminMarketDetail():JSX.Element {
         isModalVisable
           ? (
             <DeleteModal>
-              <p>정말 삭제하시겠습니까?</p>
+              <p>정말 승인하시겠습니까?</p>
               <ModalButtonBox>
-                <button onClick={() => setIsModalVisable(false)} className="modify" type="button">취소</button>
-                <button onClick={onClickDelete} className="delete" type="button">삭제</button>
+                <button onClick={() => setIsModalVisable(false)} className="delete" type="button">취소</button>
+                <button onClick={onClickAccept} className="modify" type="button">승인</button>
               </ModalButtonBox>
             </DeleteModal>
           )

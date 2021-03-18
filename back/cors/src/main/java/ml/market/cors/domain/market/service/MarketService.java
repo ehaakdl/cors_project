@@ -9,6 +9,7 @@ import ml.market.cors.domain.article.entity.dto.ArticleViewInMarketDTO;
 import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.market.entity.dto.MarketApproveStatusUpdateDTO;
 import ml.market.cors.domain.market.entity.dto.MarketViewDTO;
+import ml.market.cors.domain.market.entity.vo.MarketApprovePageVO;
 import ml.market.cors.domain.market.enums.MarketStatus;
 import ml.market.cors.domain.market.entity.vo.MarketApproveListVO;
 import ml.market.cors.domain.market.enums.MarketKey;
@@ -118,14 +119,20 @@ public class MarketService {
         return marketDAO.getMarket_id();
     }
 
-    public List<MarketApproveListVO> list(int pageIndex){
+    public MarketApprovePageVO list(int pageIndex){
         Pageable pageable = PageRequest.of(pageIndex, 10);
-        List<MarketDAO> marketDAOList = marketRepository.findAllByStatus(pageable, MarketStatus.WAIT);
+        Page<MarketDAO> marketPage = marketRepository.findAllByStatus(pageable, MarketStatus.WAIT);
+        List<MarketDAO> marketApproveItems = marketPage.getContent();
         List<MarketApproveListVO> marketApproveListVO = new ArrayList<>();
-        for (MarketDAO item : marketDAOList) {
+        for (MarketDAO item : marketApproveItems) {
             marketApproveListVO.add(new MarketApproveListVO(item.getMarket_id(), item.getName(), item.getStatus()));
         }
-        return marketApproveListVO;
+        int totalPage = marketPage.getTotalPages();
+        if(totalPage > 0){
+            totalPage = totalPage - 1;
+        }
+        MarketApprovePageVO marketApprovePageVO = new MarketApprovePageVO(marketApproveListVO, totalPage);
+        return marketApprovePageVO;
     }
 
 
