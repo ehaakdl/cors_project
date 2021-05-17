@@ -135,7 +135,7 @@ const NextPage = styled.img`
 function AdminNotice():JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { noticeTotalPage, noticeList } = useSelector((state) => state.adminSlice);
+  const { noticeTotalPage, noticeList } = useSelector((state: any) => state.adminSlice);
   const [page, setPage] = useState(0);
 
   const onClickDetail = (notice: adminNoticeInterface) => {

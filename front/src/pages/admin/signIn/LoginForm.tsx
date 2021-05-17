@@ -77,10 +77,8 @@ function LoginForm(): JSX.Element {
   };
 
   const dispatch = useDispatch();
-
   const history = useHistory();
-  
-  const onLogin = async (e:React.FormEvent<HTMLFormElement>) => {
+  const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const result = await postLoginAsync({ email: inputs.email, passwd: inputs.passwd });

@@ -164,11 +164,11 @@ function Chatting({ userNickname }: ChattingUserInterface):JSX.Element {
 
   useEffect(() => {
     client.onConnect = function (frame) {
-      const roomIdApi = `http://local.corsmarket.ml/api/chat/room?articleId=${id}`;
+      const roomIdApi = `http://local.corsmarket.shop/api/chat/room?articleId=${id}`;
       axios.post(roomIdApi)
         .then(({ data }) => {
           console.log(data.data.joinId);
-          client.subscribe(`ws://local.corsmarket.ml/api/sub/chat/room/${data.data.joinId}`, (msg) => {
+          client.subscribe(`ws://local.corsmarket.shop/api/sub/chat/room/${data.data.joinId}`, (msg) => {
             console.log('mag-------!!!!!!!!!!!!!!!!!', msg);
             setMyJoinId(data.data.joinId);
             if (msg.body) {
@@ -188,7 +188,7 @@ function Chatting({ userNickname }: ChattingUserInterface):JSX.Element {
     const sendData: sendDataInterface = { messageType: 'TALK', joinId: 'a2a7e23b-14c1-4535-99fa-a2ed4fc85fa1', nickname: '윤슬이야', content: message };
     console.log(sendData);
     client.publish({
-      destination: 'ws://local.corsmarket.ml/api/pub/chat/message',
+      destination: 'ws://local.corsmarket.shop/api/pub/chat/message',
       body: JSON.stringify(sendData),
       headers: {},
     });

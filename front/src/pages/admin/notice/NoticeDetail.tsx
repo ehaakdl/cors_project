@@ -211,7 +211,7 @@ function AdminNoticeDetail():JSX.Element {
   const { id: idParam } = useParams<{ id: string }>();
   const [isModify, setIsModify] = useState(false);
   const [isModalVisable, setIsModalVisable] = useState(false);
-  const { noticeDetail } = useSelector((state) => state.adminSlice);
+  const { noticeDetail } = useSelector((state: any) => state.adminSlice);
   const { title, content, noticeId } = noticeDetail;
   const [inputs, setInputs] = useState({
     title,
